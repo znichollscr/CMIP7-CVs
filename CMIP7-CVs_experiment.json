@@ -1381,7 +1381,9 @@
         "historical": {
             "activity": "universal:activity/cmip",
             "alias": [],
-            "description": "DECK: historical \n Simulation of the recent past",
+            "description": "DECK: historical simulation of the recent past (TODO: add details)",
+            "experiment": "Simulation of the recent past",
+            "min_number_yrs_per_sim": 171,
             "model-realms": [
                 {
                     "id": "universal:source-type/aogcm",
@@ -1401,7 +1403,11 @@
                 }
             ],
             "parent-experiment": "cmip7:experiment/picontrol",
-            "start-date": "none",
+            "required_model_components": [
+                "AOGCM"
+            ],
+            "start-date":"1850",
+            "end-date":"2021 (TODO make clear it is end of 2021, not start)",
             "tier": 0,
             "ui-label": "Simulation of the recent past (concentration driven)",
             "validation-key": "historical"
@@ -1969,7 +1975,9 @@
         "piControl": {
             "activity": "universal:activity/cmip",
             "alias": [],
-            "description": "DECK: pre-industrial control \n Pre-industrial control simulation",
+            "description": "DECK: pre-industrial control simulation (TODO: add details)",
+            "experiment": "Simulation of the pre-industrial climate",
+            "min_number_yrs_per_sim": 150,
             "model-realms": [
                 {
                     "id": "universal:source-type/aogcm",
@@ -1989,7 +1997,11 @@
                 }
             ],
             "parent-experiment": "cmip7:experiment/none",
-            "start-date": "none",
+            "start-date":null,
+            "end-date":null,
+            "required_model_components": [
+                "AOGCM"
+            ],
             "tier": 0,
             "ui-label": "Coupled atmosphere-ocea preindustrial control run (concentration driven)",
             "validation-key": "piControl"
