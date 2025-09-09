@@ -37,6 +37,23 @@ def grab_from_universe(file_to_grab: str) -> dict[Any, Any]:
     return res
 
 
+def load_cmipld_style_str(cmipld_str: str) -> dict[Any, Any]:
+    # TODO: use cmipld instead once I can get someone to explain it to me
+    repo, path = cmipld_str.split(":")
+
+    if repo == "cmip7":
+        repo_url = "https://raw.githubusercontent.com/WCRP-CMIP/CMIP7-CVs/refs/heads/main/src-data"
+
+    else:
+        raise NotImplementedError(repo)
+
+    fp = pooch.retrieve(f"{repo_url}/{path}.json", known_hash=None)
+    with open(fp) as fh:
+        res = json.load(fh)
+
+    return res
+
+
 def main() -> None:
     OUT_FILE = "CMIP7-CV_for-cmor.json"
     REPO_ROOT = Path(__file__).parents[0]
@@ -80,16 +97,34 @@ def main() -> None:
         res["CV"]["experiment_id"][exp_export] = {}
         to_edit = res["CV"]["experiment_id"][exp_export]
 
+        # TODO: resolve CMIP-LD links
         to_edit["activity_id"] = [eie["activity"]]
+        # TODO: resolve CMIP-LD links
         to_edit["additional_allowed_model_components"] = [
             v["id"] for v in eie["model-realms"]
         ]
         # TODO: check if fine to hard-code ?
         to_edit["host_collection"] = "CMIP7"
 
-        # TODO: get from linked data
-        # to_edit["parent_activity_id"]
-        to_edit["parent_experiment_id"] = [eie["parent-experiment"]]
+        if (
+            eie["parent-experiment"] is None
+            or eie["parent-experiment"] == "none"
+            # TODO: double check values
+            or eie["parent-experiment"].endswith("none")
+        ):
+            # TODO: double check values
+            to_edit["parent_experiment_id"] = []
+            to_edit["parent_activity_id"] = []
+
+        else:
+            parent_info = load_cmipld_style_str(eie["parent-experiment"])
+            # Don't love this being validation-key rather than ID, but ok
+            to_edit["parent_experiment_id"] = [parent_info["validation-key"]]
+            # TODO: double check values
+            # (we're getting ID rather than the capitalised name,
+            # probably need to retrieve through the CMIP-LD tree
+            # to get the right thing)
+            to_edit["parent_activity_id"] = parent_info["activity"]
 
         # BUG: start year vs. start date ?
         # CMOR uses "" for None rather than null

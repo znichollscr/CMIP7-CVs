@@ -35,8 +35,11 @@
                 "experiment_id": "historical",
                 "host_collection": "CMIP7",
                 "min_number_yrs_per_sim": 171,
+                "parent_activity_id": [
+                    "cmip"
+                ],
                 "parent_experiment_id": [
-                    "cmip7:experiment/picontrol"
+                    "piControl"
                 ],
                 "required_model_components": [
                     "AOGCM"
@@ -60,9 +63,8 @@
                 "experiment_id": "piControl",
                 "host_collection": "CMIP7",
                 "min_number_yrs_per_sim": 150,
-                "parent_experiment_id": [
-                    "cmip7:experiment/none"
-                ],
+                "parent_activity_id": [],
+                "parent_experiment_id": [],
                 "required_model_components": [
                     "AOGCM"
                 ],
