@@ -80,6 +80,7 @@ def main() -> None:
     with open(REPO_ROOT / "CMIP7-CVs_drs.json") as fh:
         drs_info = json.load(fh)
 
+    # TODO: get from here or from esgvoc ?
     res["CV"]["DRS"] = drs_info["drs"]
 
     # TODO: get full area label set from somewhere, universe ?
