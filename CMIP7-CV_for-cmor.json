@@ -21,13 +21,12 @@
         "experiment_id": {
             "historical": {
                 "activity_id": [
-                    "universal:activity/cmip"
+                    "CMIP"
                 ],
                 "additional_allowed_model_components": [
-                    "universal:source-type/aogcm",
-                    "universal:source-type/aer",
-                    "universal:source-type/chem",
-                    "universal:source-type/bgc"
+                    "AER",
+                    "CHEM",
+                    "BGC"
                 ],
                 "description": "DECK: historical simulation of the recent past (TODO: add details)",
                 "end_year": "2021 (TODO make clear it is end of 2021, not start)",
@@ -49,13 +48,12 @@
             },
             "piControl": {
                 "activity_id": [
-                    "universal:activity/cmip"
+                    "CMIP"
                 ],
                 "additional_allowed_model_components": [
-                    "universal:source-type/aogcm",
-                    "universal:source-type/aer",
-                    "universal:source-type/chem",
-                    "universal:source-type/bgc"
+                    "AER",
+                    "CHEM",
+                    "BGC"
                 ],
                 "description": "DECK: pre-industrial control simulation (TODO: add details)",
                 "end_year": "",

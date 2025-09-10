@@ -41,8 +41,12 @@ def load_cmipld_style_str(cmipld_str: str) -> dict[Any, Any]:
     # TODO: use cmipld instead once I can get someone to explain it to me
     repo, path = cmipld_str.split(":")
 
+    # TODO: make commits flexible
     if repo == "cmip7":
-        repo_url = "https://raw.githubusercontent.com/WCRP-CMIP/CMIP7-CVs/refs/heads/main/src-data"
+        repo_url = "https://raw.githubusercontent.com/WCRP-CMIP/CMIP7-CVs/4a5e9b6ab4738a479c2a5a7b23eb85f9ff94a243/src-data"
+
+    elif repo == "universal":
+        repo_url = "https://raw.githubusercontent.com/WCRP-CMIP/WCRP-universe/c8a435e51bf0f761b463f43c6f044d6c9fd55d75/src-data"
 
     else:
         raise NotImplementedError(repo)
@@ -92,17 +96,28 @@ def main() -> None:
     res["CV"]["experiment_id"] = {}
     # for exp_export in experiment_info["experiment"]:
     for exp_export in ["historical", "piControl"]:
-        # TODO: resolve cross links in this source
         eie = experiment_info["experiment"][exp_export]
         res["CV"]["experiment_id"][exp_export] = {}
         to_edit = res["CV"]["experiment_id"][exp_export]
 
-        # TODO: resolve CMIP-LD links
-        to_edit["activity_id"] = [eie["activity"]]
-        # TODO: resolve CMIP-LD links
-        to_edit["additional_allowed_model_components"] = [
-            v["id"] for v in eie["model-realms"]
-        ]
+        activity_info = load_cmipld_style_str(eie["activity"])
+        # Again, don't love using validation-key rather than ID,
+        # but ok we probably just have to document this
+        to_edit["activity_id"] = [activity_info["validation-key"]]
+
+        to_edit["additional_allowed_model_components"] = []
+        to_edit["required_model_components"] = []
+        for mr in eie["model-realms"]:
+            mr_info = load_cmipld_style_str(mr["id"])
+            if mr["is-required"]:
+                key = "required_model_components"
+            else:
+                key = "additional_allowed_model_components"
+
+            # Again, don't love using validation-key rather than ID,
+            # but ok we probably just have to document this
+            to_edit[key].append(mr_info["validation-key"])
+
         # TODO: check if fine to hard-code ?
         to_edit["host_collection"] = "CMIP7"
 
@@ -140,9 +155,6 @@ def main() -> None:
         # TODO: check if this mapping is correct
         to_edit["experiment_id"] = eie["validation-key"]
         to_edit["min_number_yrs_per_sim"] = eie["min_number_yrs_per_sim"]
-
-        # TODO: check what this is meant to be
-        to_edit["required_model_components"] = eie["required_model_components"]
 
     frequency_info = grab_from_universe("WCRP-universe_frequency.json")
     res["CV"]["frequency"] = {}

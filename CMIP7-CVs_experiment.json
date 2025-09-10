@@ -1403,9 +1403,6 @@
                 }
             ],
             "parent-experiment": "cmip7:experiment/picontrol",
-            "required_model_components": [
-                "AOGCM"
-            ],
             "start-date":"1850",
             "end-date":"2021 (TODO make clear it is end of 2021, not start)",
             "tier": 0,
@@ -1999,9 +1996,6 @@
             "parent-experiment": "cmip7:experiment/none",
             "start-date":null,
             "end-date":null,
-            "required_model_components": [
-                "AOGCM"
-            ],
             "tier": 0,
             "ui-label": "Coupled atmosphere-ocea preindustrial control run (concentration driven)",
             "validation-key": "piControl"
