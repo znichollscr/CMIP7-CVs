@@ -1,12 +1,12 @@
 {
     "CV": {
         "DRS": {
-            "directory-path-example": "",
-            "directory-path-sub-experiment-example": "C",
-            "directory-path-template": "",
+            "directory-path-example": "CMIP7/ScenarioMIP/very-good-institute/model-1-0-0/historical/r1i1p1f1/glb/mon/tos/tavg-u-hxy-sea/gn/v20251011",
+            "directory-path-sub-experiment-example": "",
+            "directory-path-template": "<drs_specs>/<activity_id>/<institution_id>/<source_id>/<experiment_id>/<variant_label>/<region>/<frequency>/<variable_id>/<branding_suffix>/<grid_label>/<version>",
             "filename-example": "",
-            "filename-sub-experiment-example": "",
-            "filename-template": ""
+            "filename-sub-experiment-example": "tos_tavg-u-hxy-sea_mon_glb_gn_model-1-0-0_historical_r1i1p1f1_185001_202112.nc",
+            "filename-template": "<variable_id>_<branding_suffix>_<frequency>_<region>_<grid_label>_ <source_id>_<experiment_id>_<variant_label>[_<time_range>].nc"
         },
         "archive_id": {
             "WCRP": "a collection of datasets from the AMIP and CMIP project phases, along with project supporting datasets from the input4MIPs (forcing datasets used to drive CMIP simulations) and obs4MIPs (observational datasets used to evaluate CMIP simulations, and numerous other supporting activities"

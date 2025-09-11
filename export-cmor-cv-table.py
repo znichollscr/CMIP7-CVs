@@ -80,7 +80,7 @@ def main() -> None:
     with open(REPO_ROOT / "CMIP7-CVs_drs.json") as fh:
         drs_info = json.load(fh)
 
-    # TODO: get from here or from esgvoc ?
+    # TODO: get from esgvoc branch
     res["CV"]["DRS"] = drs_info["drs"]
 
     # TODO: get full area label set from somewhere, universe ?
@@ -220,7 +220,6 @@ def main() -> None:
     # TODO: check fine to hard-code
     res["CV"]["mip_era"] = "CMIP7"
 
-    # TODO: nominal resolution missing - or from universe ?
     nominal_resolution_info = grab_from_universe("WCRP-universe_resolution.json")
     res["CV"]["nominal_resolution"] = []
     for nominal_resolution in nominal_resolution_info["resolution"]:
