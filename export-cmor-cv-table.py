@@ -135,12 +135,16 @@ def main() -> None:
         else:
             parent_info = load_cmipld_style_str(eie["parent-experiment"])
             # Don't love this being validation-key rather than ID, but ok
+            parent_activity_id = parent_info["activity"][0]
+            if parent_activity_id == "cmip":
+                parent_activity_id = "CMIP"
+
             to_edit["parent_experiment_id"] = [parent_info["validation-key"]]
             # TODO: double check values
             # (we're getting ID rather than the capitalised name,
             # probably need to retrieve through the CMIP-LD tree
             # to get the right thing)
-            to_edit["parent_activity_id"] = parent_info["activity"]
+            to_edit["parent_activity_id"] = [parent_activity_id]
 
         # BUG: start year vs. start date ?
         # CMOR uses "" for None rather than null
