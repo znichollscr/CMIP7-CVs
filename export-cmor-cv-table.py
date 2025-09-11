@@ -58,6 +58,34 @@ def load_cmipld_style_str(cmipld_str: str) -> dict[Any, Any]:
     return res
 
 
+def get_approx_interval(frequency: str) -> float:
+    if frequency.startswith("1hr"):
+        return 1.0 / 24.0
+
+    if frequency.startswith("subhr"):
+        return 1.0 / 24.0
+
+    if frequency.startswith("3hr"):
+        return 3.0 / 24.0
+
+    if frequency.startswith("6hr"):
+        return 6.0 / 24.0
+
+    if frequency.startswith("day"):
+        return 1.0
+
+    if frequency.startswith("dec"):
+        return 365.0 * 10.0
+
+    if frequency.startswith("mon"):
+        return 30.0
+
+    if frequency.startswith("yr"):
+        return 365.0
+
+    raise NotImplementedError(frequency)
+
+
 def main() -> None:
     OUT_FILE = "CMIP7-CV_for-cmor.json"
     REPO_ROOT = Path(__file__).parents[0]
@@ -164,9 +192,14 @@ def main() -> None:
     frequency_info = grab_from_universe("WCRP-universe_frequency.json")
     res["CV"]["frequency"] = {}
     for frequency, info in frequency_info["frequency"].items():
+        if frequency == "fx":
+            # Makes perfect sense to break the data model
+            res["CV"]["frequency"][frequency] = "fixed (time invariant) field"
+            continue
+
         res["CV"]["frequency"][frequency] = {
             # Is this meant to be in the universe? Or not needed?
-            "approx_interval": None,
+            "approx_interval": get_approx_interval(frequency),
             "description": info["description"],
         }
 
