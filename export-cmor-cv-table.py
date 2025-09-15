@@ -10,7 +10,11 @@ import json
 from pathlib import Path
 from typing import Any
 
+import cmipld
 import pooch
+
+# Maybe this was the trick to using cmipld
+cmipld.loader.clear_cache()
 
 
 def grab_from_universe(file_to_grab: str) -> dict[Any, Any]:
@@ -32,27 +36,6 @@ def grab_from_universe(file_to_grab: str) -> dict[Any, Any]:
     )
 
     with open(raw) as fh:
-        res = json.load(fh)
-
-    return res
-
-
-def load_cmipld_style_str(cmipld_str: str) -> dict[Any, Any]:
-    # TODO: use cmipld instead once I can get someone to explain it to me
-    repo, path = cmipld_str.split(":")
-
-    # TODO: make commits flexible
-    if repo == "cmip7":
-        repo_url = "https://raw.githubusercontent.com/WCRP-CMIP/CMIP7-CVs/4a5e9b6ab4738a479c2a5a7b23eb85f9ff94a243/src-data"
-
-    elif repo == "universal":
-        repo_url = "https://raw.githubusercontent.com/WCRP-CMIP/WCRP-universe/c8a435e51bf0f761b463f43c6f044d6c9fd55d75/src-data"
-
-    else:
-        raise NotImplementedError(repo)
-
-    fp = pooch.retrieve(f"{repo_url}/{path}.json", known_hash=None)
-    with open(fp) as fh:
         res = json.load(fh)
 
     return res
@@ -129,22 +112,19 @@ def main() -> None:
         res["CV"]["experiment_id"][exp_export] = {}
         to_edit = res["CV"]["experiment_id"][exp_export]
 
-        activity_info = load_cmipld_style_str(eie["activity"])
-        # Again, don't love using validation-key rather than ID,
-        # but ok we probably just have to document this
+        activity_info = cmipld.get(eie["activity"], depth=-1)
+        # "validation-key" is the 'actual CMIP value'
         to_edit["activity_id"] = [activity_info["validation-key"]]
 
         to_edit["additional_allowed_model_components"] = []
         to_edit["required_model_components"] = []
         for mr in eie["model-realms"]:
-            mr_info = load_cmipld_style_str(mr["id"])
+            mr_info = cmipld.get(mr["id"], depth=-1)
             if mr["is-required"]:
                 key = "required_model_components"
             else:
                 key = "additional_allowed_model_components"
 
-            # Again, don't love using validation-key rather than ID,
-            # but ok we probably just have to document this
             to_edit[key].append(mr_info["validation-key"])
 
         # TODO: check if fine to hard-code ?
@@ -161,18 +141,10 @@ def main() -> None:
             to_edit["parent_activity_id"] = []
 
         else:
-            parent_info = load_cmipld_style_str(eie["parent-experiment"])
-            # Don't love this being validation-key rather than ID, but ok
-            parent_activity_id = parent_info["activity"][0]
-            if parent_activity_id == "cmip":
-                parent_activity_id = "CMIP"
+            parent_info = cmipld.get(eie["parent-experiment"], depth=-1)
 
             to_edit["parent_experiment_id"] = [parent_info["validation-key"]]
-            # TODO: double check values
-            # (we're getting ID rather than the capitalised name,
-            # probably need to retrieve through the CMIP-LD tree
-            # to get the right thing)
-            to_edit["parent_activity_id"] = [parent_activity_id]
+            to_edit["parent_activity_id"] = [parent_info["activity"]["validation-key"]]
 
         # BUG: start year vs. start date ?
         # CMOR uses "" for None rather than null
