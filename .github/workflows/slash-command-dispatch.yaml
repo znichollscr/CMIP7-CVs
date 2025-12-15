@@ -1,0 +1,21 @@
+# Dispatch of jobs triggered by slash commands
+name: Slash command dispatch
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  slashCommandDispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch
+        uses: peter-evans/slash-command-dispatch@v2
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          issue-type: pull-request
+          event-type-suffix: -command
+          dispatch-type: workflow
+          commands: |
+            update-cmor-cvs-table
+            update-stac-json
