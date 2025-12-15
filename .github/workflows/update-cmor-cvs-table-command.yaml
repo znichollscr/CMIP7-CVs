@@ -1,6 +1,7 @@
 # Update the CMOR CVs table when triggered
 on:
   workflow_dispatch:
+    types: [update-cmor-cvs-table-command]
     inputs:
       repository:
         description: 'The repository from which the slash command was dispatched'
