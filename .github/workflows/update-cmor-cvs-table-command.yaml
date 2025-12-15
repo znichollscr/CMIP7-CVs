@@ -1,4 +1,5 @@
 # Update the CMOR CVs table when triggered
+name: update-cmor-cvs-table-command
 on:
   workflow_dispatch:
     types: [update-cmor-cvs-table-command]
