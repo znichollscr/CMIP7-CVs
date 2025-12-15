@@ -19,3 +19,6 @@ jobs:
           commands: |
             update-cmor-cvs-table
             update-stac-json
+          static-args: |
+            repository=${{ github.repository }}
+            comment-id=${{ github.event.comment.id }}
