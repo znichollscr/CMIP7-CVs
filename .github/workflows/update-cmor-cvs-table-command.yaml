@@ -16,6 +16,10 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.client_payload.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.client_payload.pull_request.head.ref }}
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       - uses: actions/setup-python@v5
         with:
@@ -29,7 +33,7 @@ jobs:
           # Modify these as needed
           UNIVERSE_CVS_FORK: "znichollscr"
           UNIVERSE_CVS_BRANCH: "cmip-description"
-          CMIP7_CVS_FORK: ${{ github.event.pull_request.head.repo.owner.login }}
+          CMIP7_CVS_FORK: ${{ github.event.client_payload.pull_request.head.repo.owner.login }}
           CMIP7_CVS_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           which pip
