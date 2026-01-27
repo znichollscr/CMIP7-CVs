@@ -41,7 +41,6 @@ log "UNIVERSE_CVS_BRANCH=$UNIVERSE_CVS_BRANCH"
 log "CMIP7_CVS_FORK=$CMIP7_CVS_FORK"
 log "CMIP7_CVS_BRANCH=$CMIP7_CVS_BRANCH"
 
-# TODO: update requirements-cmor-cvs-table.txt before calling so the version used is recorded
 pip install -r requirements-cmor-cvs-table.txt
 pip install --no-deps "git+https://github.com/$ESGVOC_FORK/esgf-vocab.git@$ESGVOC_REVISION"
 
