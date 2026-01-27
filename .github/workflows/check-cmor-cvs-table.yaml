@@ -31,9 +31,14 @@ jobs:
           source cmor-cvs-creation.env
           bash install-environment-for-cmor-cvs-creation.sh -v
 
+      - name: Reset environment file
+        run: |
+          # Reset environment file (we don't need/want to keep these changes)
+          git checkout -- cmor-cvs-creation.env
+
       - name: Check CMOR CVs table is up to date
         run: |
           esgvoc cmor-export-cvs-table --out-path cmor-cvs.json
 
           git diff
-          (! git status --porcelain --untracked-files=no | grep '^.M') || (echo 'CMOR CVs table is not up to date. Please comment `/update-cmor-cvs-table` in your pull request or update the CMOR CVs file locally and commit the result. If you need help, please feel free to tag `@znichollscr` in your pull request.' && exit 1)
+          (! git status --porcelain --untracked-files=no | grep '^.M') || (echo 'CMOR CVs table and/or related files are not up to date. Please comment `/update-cmor-cvs-table` in your pull request or update the CMOR CVs file locally and commit the result. If you need help, please feel free to tag `@znichollscr` in your pull request.' && exit 1)
