@@ -1,5 +1,3 @@
-# The CVs table should be handled by pre-commit.
-# This just makes sure that people haven't hacked around/missed that.
 name: Check CMOR CVs table
 
 on:
@@ -9,7 +7,7 @@ on:
     tags: ['v*']
 
 jobs:
-  check-cmor-cvs-table-up-to-date:
+  check-cmor-cvs-table-is-up-to-date:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -19,8 +17,9 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Set up and install esgvoc
+      - name: Update environment file
         env:
+<<<<<<< HEAD
           # Modify these as needed
           ESGVOC_FORK: "znichollscr"
           ESGVOC_REVISION: "a02ccc2"
@@ -29,25 +28,23 @@ jobs:
           UNIVERSE_CVS_BRANCH: "add-ukmo-entries"
           CMIP7_CVS_FORK: ${{ github.event.pull_request.head.repo.owner.login }}
           CMIP7_CVS_BRANCH: ${{ github.head_ref || github.ref_name }}
+=======
+          CMIP7_CVS_FORK: ${{ github.event.inputs.cmip7-cvs-fork }}
+          CMIP7_CVS_BRANCH: ${{ github.event.inputs.cmip7-cvs-branch }}
+>>>>>>> ccb94c21 (Update check CMOR CVs table workflow)
         run: |
-          which pip
-          pip install -r requirements-cmor-cvs-table.txt
-          pip install --no-deps "git+https://github.com/$ESGVOC_FORK/esgf-vocab.git@$ESGVOC_REVISION"
-          esgvoc config create cmip7-cvs-ci-export
-          esgvoc config switch cmip7-cvs-ci-export
+          # Update the CMIP7 CVs fork and branch in the environment file
+          sed -i -e 's/CMIP7_CVS_FORK=.*/CMIP7_CVS_FORK='"${CMIP7_CVS_FORK}"'/g' cmor-cvs-creation.env
+          sed -i -e 's/CMIP7_CVS_BRANCH=.*/CMIP7_CVS_BRANCH='"${CMIP7_CVS_BRANCH}"'/g' cmor-cvs-creation.env
 
-          esgvoc config remove-project -f cmip7 || true
-
-          esgvoc config set "universe:github_repo=https://github.com/$UNIVERSE_CVS_FORK/WCRP-universe" "universe:branch=$UNIVERSE_CVS_BRANCH"
-          esgvoc config add-project cmip7 --custom --repo "https://github.com/$CMIP7_CVS_FORK/CMIP7-CVs" --branch "$CMIP7_CVS_BRANCH"
-
-          esgvoc config remove-project -f cmip6
-          esgvoc config remove-project -f cmip6plus
-          esgvoc install
+      - name: Set up environment
+        run: |
+          source cmor-cvs-creation.env
+          bash install-environment-for-cmor-cvs-creation.sh -v
 
       - name: Check CMOR CVs table is up to date
         run: |
           esgvoc cmor-export-cvs-table --out-path cmor-cvs.json
 
           git diff
-          (! git status --porcelain --untracked-files=no | grep '^.M') || (echo 'CMOR CVs table is not up to date. Please run `bash create-cmor-cvs-table-export-environment.sh` (if you have not already), then run `venv/bin/esgvoc cmor-export-cvs-table --out-path cmor-cvs.json` locally, then commit and push the results.' && exit 1)
+          (! git status --porcelain --untracked-files=no | grep '^.M') || (echo 'CMOR CVs table is not up to date. Please comment `/update-cmor-cvs-table` in your pull request or update the CMOR CVs file locally and commit the result. If you need help, please feel free to tag `@znichollscr` in your pull request.' && exit 1)
