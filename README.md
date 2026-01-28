@@ -39,7 +39,8 @@ At the time of writing, the available arguments are
 - `cmip7-cvs-branch`: 'The branch to use when retrieving the CMIP7 CVs
 
 For users who prefer to run things locally, simply update `cmor-cvs-creation.env` as required,
-then run `bash install-environment-for-cmor-cvs-creation.sh -v`
+then (likely within a virtual environment)
+run `source cmor-cvs-creation.env && bash install-environment-for-cmor-cvs-creation.sh -v`
 then `esgvoc cmor-export-cvs-table --out-path cmor-cvs.json`
 then finally commit and push the result.
 
